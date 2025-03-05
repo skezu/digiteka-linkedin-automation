@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
-const { sendConnectionRequest, sendMessage, checkConnectionStatus } = require('./linkedinActions');
+const { sendConnectionRequest, sendMessage, checkConnectionStatus, cleanupBrowser } = require('./linkedinActions');
 
 app.use(express.json());
 
@@ -45,4 +45,24 @@ app.get('/check-connection-status', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`LinkedIn Automation API running on port ${port}`);
+});
+
+// Add cleanup handlers
+process.on('SIGINT', async () => {
+  console.log('Received SIGINT. Performing cleanup...');
+  await cleanupBrowser();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM. Performing cleanup...');
+  await cleanupBrowser();
+  process.exit(0);
+});
+
+// Optional: cleanup on uncaught exceptions
+process.on('uncaughtException', async (error) => {
+  console.error('Uncaught Exception:', error);
+  await cleanupBrowser();
+  process.exit(1);
 });
