@@ -397,7 +397,7 @@ async function checkConnectionStatus(profileUrl) {
         ]);
         
         // Make sure the page is ready before proceeding
-        await page.waitForSelector('body', { timeout: 5000 });
+        await page.waitForSelector('body', { timeout: 15000 });
         
         // Verify we landed on the correct page
         const currentUrl = page.url();
